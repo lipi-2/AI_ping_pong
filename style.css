@@ -28,11 +28,12 @@
     text-align: left;
     font-size: 20px;
 }
-h4
+.footer
 {
-   background-color: grey;
-   color:white;
-   line-height: 2;
+    float: bottom;
+    background-color: grey;
+    color:white;
+    line-height: 2;
 }
 canvas 
   {
