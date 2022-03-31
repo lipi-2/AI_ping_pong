@@ -24,16 +24,23 @@ scoreRightWrist = 0;
 
 game_status = "";
 
-function setup(){
-var canvas =  createCanvas(700,600);
-canvas.parent('canvas');
+function preload()
+{
+  ball_touch_paddel = loadSound("ball_touch_paddel.wav");
+  missed = loadSound("missed.wav");
+}
 
-video = createCapture(VIDEO);
-video.size(700, 600);
-video.hide();
+function setup()
+{
+  var canvas =  createCanvas(700,600);
+  canvas.parent('canvas');
 
-poseNet = ml5.poseNet(video, modelLoaded);
-poseNet.on('pose', gotPoses);
+  video = createCapture(VIDEO);
+  video.size(700, 600);
+  video.hide();
+
+  poseNet = ml5.poseNet(video, modelLoaded);
+  poseNet.on('pose', gotPoses);
 }
 
 function modelLoaded() {
@@ -56,6 +63,13 @@ function startGame()
 {
   game_status = "start";
   document.getElementById("status").innerHTML = "Game is loading";
+}
+
+function restart()
+{
+  pcscore = 0
+  playerscore = 0
+  loop()
 }
 
 function draw()
@@ -146,7 +160,8 @@ function drawScore(){
 
 
 //very important function of this game
-function move(){
+function move()
+{
    fill(50,350,0);
    stroke(255,0,0);
    strokeWeight(0.5);
@@ -156,19 +171,21 @@ function move(){
    if(ball.x+ball.r>width-ball.r/2){
        ball.dx=-ball.dx-0.5;       
    }
-  if (ball.x-2.5*ball.r/2< 0){
-  if (ball.y >= paddle1Y&& ball.y <= paddle1Y + paddle1Height) {
-    ball.dx = -ball.dx+0.5; 
-    
+  if (ball.x-2.5*ball.r/2< 0)
+  {
+    if (ball.y >= paddle1Y&& ball.y <= paddle1Y + paddle1Height) {
+      ball.dx = -ball.dx+0.5; 
+      ball_touch_paddel.play()
+    }
+    else{
+      pcscore++;
+      missed.play()
+      reset();
+      navigator.vibrate(100);
+    }
   }
-  else{
-    pcscore++;
-    
-    reset();
-    navigator.vibrate(100);
-  }
-}
-if(pcscore ==4){
+  if(pcscore == 3)
+  {
     fill("#FFA500");
     stroke(0)
     rect(0,0,width,height-1);
@@ -176,13 +193,14 @@ if(pcscore ==4){
     stroke("white");
     textSize(25);
     text("Game Over!",width/2,height/2);
-    text("Reload the page!",width/2,height/2+30)
+    text("Press the Restart button to play again!",width/2,height/2+30)
     noLoop();
     pcscore = 0;
- }
-   if(ball.y+ball.r > height || ball.y-ball.r <0){
-       ball.dy =- ball.dy;
-   }   
+  }
+  if(ball.y+ball.r > height || ball.y-ball.r <0)
+  {
+    ball.dy =- ball.dy;
+  }   
 }
 
 
